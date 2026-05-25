@@ -1,374 +1,532 @@
-# ============================================
-# TAMIL NADU ELECTION PREDICTION 
-# ============================================
+# ============================================================
+# TAMIL NADU ELECTION AI PREDICTION SYSTEM
+# BEST STREAMLIT UI + ML + AUTO PREDICTION
+# ============================================================
+
+# RUN:
+# streamlit run app.py
+
+# INSTALL:
+# pip install streamlit pandas numpy scikit-learn xgboost plotly joblib streamlit-lottie requests
+
+# ============================================================
+# IMPORT LIBRARIES
+# ============================================================
 
 import streamlit as st
 import pandas as pd
 import numpy as np
-import joblib
 import plotly.express as px
 import plotly.graph_objects as go
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
-import seaborn as sns
-import matplotlib.pyplot as plt
+import joblib
+import requests
 
-# --------------------------------
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score
+from xgboost import XGBClassifier
+
+from streamlit_lottie import st_lottie
+
+# ============================================================
 # PAGE CONFIG
-# --------------------------------
+# ============================================================
+
 st.set_page_config(
-    page_title="Tamil Nadu Election Prediction",
+    page_title="Tamil Nadu Election AI",
     page_icon="🗳️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# --------------------------------
+# ============================================================
 # CUSTOM CSS
-# --------------------------------
+# ============================================================
+
 st.markdown("""
 <style>
 
+/* MAIN BACKGROUND */
+
 .stApp {
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    background: linear-gradient(135deg, #000428, #004e92);
     color: white;
 }
 
+/* TITLE */
+
 .main-title {
-    text-align: center;
-    font-size: 45px;
+    font-size: 55px;
     font-weight: bold;
+    text-align: center;
     color: #FFD700;
+    text-shadow: 2px 2px 15px rgba(255,215,0,0.8);
 }
+
+/* SUBTITLE */
 
 .sub-title {
     text-align: center;
-    font-size: 20px;
+    font-size: 22px;
     color: white;
+    margin-bottom: 30px;
 }
 
-.metric-box {
-    background-color: rgba(255,255,255,0.08);
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    color: white;
-    box-shadow: 0px 0px 15px rgba(255,255,255,0.2);
+/* GLASS CARD */
+
+.glass {
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 25px rgba(255,255,255,0.15);
 }
+
+/* METRIC BOX */
+
+.metric-box {
+    background: linear-gradient(135deg,#1f4037,#99f2c8);
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+    box-shadow: 0px 0px 20px rgba(255,255,255,0.2);
+}
+
+/* BUTTON */
+
+.stButton>button {
+    width: 100%;
+    background: linear-gradient(90deg,#FFD700,#FFA500);
+    color: black;
+    border-radius: 15px;
+    height: 60px;
+    font-size: 22px;
+    font-weight: bold;
+    border: none;
+    transition: 0.4s;
+}
+
+.stButton>button:hover {
+    transform: scale(1.03);
+    box-shadow: 0px 0px 20px gold;
+}
+
+/* INPUT BOX */
+
+.stNumberInput input {
+    background-color: white !important;
+    color: black !important;
+    border-radius: 10px !important;
+}
+
+/* SELECT BOX */
 
 div[data-baseweb="select"] > div {
     background-color: white !important;
     color: black !important;
 }
 
-.stNumberInput input {
-    background-color: white !important;
-    color: black !important;
+/* SIDEBAR */
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg,#141e30,#243b55);
 }
 
-.stButton>button {
-    background-color: #FFD700;
-    color: black;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    height: 3em;
-    width: 100%;
-}
+/* HIDE STREAMLIT */
+
+#MainMenu {visibility:hidden;}
+footer {visibility:hidden;}
 
 </style>
 """, unsafe_allow_html=True)
 
-# --------------------------------
-# TITLE
-# --------------------------------
-st.markdown("<h1 class='main-title'>🗳️ Tamil Nadu Election Prediction</h1>", unsafe_allow_html=True)
-st.markdown("<p class='sub-title'>Machine Learning Based Election Winner Prediction System</p>", unsafe_allow_html=True)
+# ============================================================
+# LOTTIE ANIMATION
+# ============================================================
 
-# --------------------------------
-# LOAD DATA
-# --------------------------------
+def load_lottie(url):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+
+lottie_animation = load_lottie(
+    "https://assets9.lottiefiles.com/packages/lf20_puciaact.json"
+)
+
+# ============================================================
+# TITLE
+# ============================================================
+
+st.markdown("<h1 class='main-title'>🗳️ Tamil Nadu Election AI</h1>", unsafe_allow_html=True)
+
+st.markdown("<p class='sub-title'>Advanced Machine Learning Election Prediction Dashboard</p>", unsafe_allow_html=True)
+
+# ============================================================
+# ANIMATION
+# ============================================================
+
+col1, col2, col3 = st.columns([1,2,1])
+
+with col2:
+    st_lottie(
+        lottie_animation,
+        height=300,
+        key="election"
+    )
+
+# ============================================================
+# LOAD DATASET
+# ============================================================
+
 df = pd.read_csv("eci_results_tamilnadu_2026.csv")
 
-# --------------------------------
+# ============================================================
 # CLEAN DATA
-# --------------------------------
-df = df.dropna()
+# ============================================================
 
-# --------------------------------
+df.dropna(inplace=True)
+
+# ============================================================
 # CREATE WINNER COLUMN
-# --------------------------------
+# ============================================================
+
 max_votes = df.groupby('Constituency')['Total Votes'].transform('max')
 
-df['Winner'] = np.where(df['Total Votes'] == max_votes, 1, 0)
+df['Winner'] = np.where(
+    df['Total Votes'] == max_votes,
+    1,
+    0
+)
 
-# --------------------------------
+# ============================================================
 # ENCODING
-# --------------------------------
+# ============================================================
+
 party_encoder = LabelEncoder()
+const_encoder = LabelEncoder()
+
 df['Party_Encoded'] = party_encoder.fit_transform(df['Party'])
 
-const_encoder = LabelEncoder()
 df['Constituency_Encoded'] = const_encoder.fit_transform(df['Constituency'])
 
-# --------------------------------
+# ============================================================
+# FEATURE ENGINEERING
+# ============================================================
+
+df['Vote_Strength'] = df['EVM Votes'] + df['Postal Votes']
+
+df['Vote_Share'] = (
+    df['Total Votes'] /
+    df.groupby('Constituency')['Total Votes'].transform('sum')
+)
+
+# ============================================================
 # FEATURES & TARGET
-# --------------------------------
+# ============================================================
+
 X = df[[
     'EVM Votes',
     'Postal Votes',
     'Total Votes',
     '% Votes',
+    'Vote_Strength',
+    'Vote_Share',
     'Party_Encoded',
     'Constituency_Encoded'
 ]]
 
 y = df['Winner']
 
-# --------------------------------
-# SPLIT DATA
-# --------------------------------
+# ============================================================
+# TRAIN TEST SPLIT
+# ============================================================
+
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
     test_size=0.2,
+    random_state=42,
+    stratify=y
+)
+
+# ============================================================
+# TRAIN XGBOOST MODEL
+# ============================================================
+
+model = XGBClassifier(
+    n_estimators=400,
+    learning_rate=0.05,
+    max_depth=8,
+    subsample=0.9,
+    colsample_bytree=0.9,
+    eval_metric='logloss',
     random_state=42
 )
 
-# --------------------------------
-# TRAIN MODELS
-# --------------------------------
-lr_model = LogisticRegression(max_iter=1000)
-lr_model.fit(X_train, y_train)
+model.fit(X_train, y_train)
 
-rf_model = RandomForestClassifier(
-    n_estimators=100,
-    random_state=42
-)
-rf_model.fit(X_train, y_train)
+# ============================================================
+# MODEL ACCURACY
+# ============================================================
 
-xgb_model = XGBClassifier(
-    use_label_encoder=False,
-    eval_metric='logloss'
-)
-xgb_model.fit(X_train, y_train)
+predictions = model.predict(X_test)
 
-# --------------------------------
-# PREDICTIONS
-# --------------------------------
-lr_pred = lr_model.predict(X_test)
-rf_pred = rf_model.predict(X_test)
-xgb_pred = xgb_model.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
 
-# --------------------------------
-# ACCURACY
-# --------------------------------
-lr_acc = accuracy_score(y_test, lr_pred)
-rf_acc = accuracy_score(y_test, rf_pred)
-xgb_acc = accuracy_score(y_test, xgb_pred)
-
-# --------------------------------
+# ============================================================
 # METRICS
-# --------------------------------
+# ============================================================
+
+st.markdown("## 📊 Model Performance")
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown(f"""
-    <div class='metric-box'>
-        <h2>Logistic Regression</h2>
-        <h1>{lr_acc:.2f}</h1>
+    <div class="metric-box">
+    <h2>Accuracy</h2>
+    <h1>{accuracy*100:.2f}%</h1>
     </div>
     """, unsafe_allow_html=True)
 
 with col2:
+    winners = df['Winner'].sum()
+
     st.markdown(f"""
-    <div class='metric-box'>
-        <h2>Random Forest</h2>
-        <h1>{rf_acc:.2f}</h1>
+    <div class="metric-box">
+    <h2>Total Winners</h2>
+    <h1>{winners}</h1>
     </div>
     """, unsafe_allow_html=True)
 
 with col3:
+    total_parties = df['Party'].nunique()
+
     st.markdown(f"""
-    <div class='metric-box'>
-        <h2>XGBoost</h2>
-        <h1>{xgb_acc:.2f}</h1>
+    <div class="metric-box">
+    <h2>Total Parties</h2>
+    <h1>{total_parties}</h1>
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("---")
+# ============================================================
+# PARTY PERFORMANCE CHART
+# ============================================================
 
-# --------------------------------
-# MODEL ACCURACY GRAPH
-# --------------------------------
-st.subheader("📊 Model Accuracy Comparison")
+st.markdown("## 🏆 Top Political Parties")
 
-accuracy_df = pd.DataFrame({
-    'Model': ['Logistic Regression', 'Random Forest', 'XGBoost'],
-    'Accuracy': [lr_acc, rf_acc, xgb_acc]
-})
-
-fig = px.bar(
-    accuracy_df,
-    x='Model',
-    y='Accuracy',
-    text='Accuracy',
-    color='Model',
-    template='plotly_dark'
+party_votes = (
+    df.groupby('Party')['Total Votes']
+    .sum()
+    .sort_values(ascending=False)
+    .head(10)
 )
-
-fig.update_traces(texttemplate='%{text:.2f}', textposition='outside')
-
-st.plotly_chart(fig, use_container_width=True)
-
-# --------------------------------
-# TOP PARTIES
-# --------------------------------
-st.subheader("🏆 Top 10 Parties by Total Votes")
-
-party_votes = df.groupby('Party')['Total Votes'].sum().sort_values(ascending=False).head(10)
 
 party_df = pd.DataFrame({
     'Party': party_votes.index,
     'Votes': party_votes.values
 })
 
-fig2 = px.bar(
+fig = px.bar(
     party_df,
     x='Party',
     y='Votes',
     color='Votes',
+    text='Votes',
     template='plotly_dark'
 )
 
-st.plotly_chart(fig2, use_container_width=True)
+fig.update_layout(
+    height=500,
+    font_size=16
+)
 
-# --------------------------------
-# CONFUSION MATRIX
-# --------------------------------
-st.subheader("📌 Confusion Matrix")
+st.plotly_chart(fig, use_container_width=True)
 
-cm = confusion_matrix(y_test, xgb_pred)
-
-fig3, ax = plt.subplots(figsize=(6,4))
-
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax)
-
-plt.xlabel("Predicted")
-plt.ylabel("Actual")
-
-st.pyplot(fig3)
-
-# --------------------------------
+# ============================================================
 # FEATURE IMPORTANCE
-# --------------------------------
-st.subheader("🔥 Feature Importance")
+# ============================================================
+
+st.markdown("## 🔥 Feature Importance")
 
 importance = pd.DataFrame({
     'Feature': X.columns,
-    'Importance': xgb_model.feature_importances_
+    'Importance': model.feature_importances_
 })
 
-importance = importance.sort_values(by='Importance', ascending=False)
+importance = importance.sort_values(
+    by='Importance',
+    ascending=False
+)
 
-fig4 = px.bar(
+fig2 = px.bar(
     importance,
-    x='Feature',
-    y='Importance',
+    x='Importance',
+    y='Feature',
+    orientation='h',
     color='Importance',
     template='plotly_dark'
 )
 
-st.plotly_chart(fig4, use_container_width=True)
+fig2.update_layout(height=500)
 
-# --------------------------------
-# PREDICTION SECTION
-# --------------------------------
-st.markdown("---")
-st.subheader("🧠 Predict Future Election Winner")
+st.plotly_chart(fig2, use_container_width=True)
 
-col1, col2 = st.columns(2)
+# ============================================================
+# AUTOMATIC WINNER PREDICTION
+# ============================================================
 
-with col1:
-    evm_votes = st.number_input("EVM Votes", value=70000)
+st.markdown("## 🤖 Automatic Election Prediction")
 
-    postal_votes = st.number_input("Postal Votes", value=500)
+latest = df.sort_values(
+    by='Total Votes',
+    ascending=False
+).head(1)
 
-    total_votes = st.number_input("Total Votes", value=70500)
+winner_party = latest['Party'].values[0]
+winner_candidate = latest['Candidate'].values[0]
+winner_const = latest['Constituency'].values[0]
+winner_votes = latest['Total Votes'].values[0]
 
-with col2:
-    percent_votes = st.number_input("% Votes", value=40.2)
+prediction_input = pd.DataFrame({
+    'EVM Votes': [latest['EVM Votes'].values[0]],
+    'Postal Votes': [latest['Postal Votes'].values[0]],
+    'Total Votes': [latest['Total Votes'].values[0]],
+    '% Votes': [latest['% Votes'].values[0]],
+    'Vote_Strength': [latest['Vote_Strength'].values[0]],
+    'Vote_Share': [latest['Vote_Share'].values[0]],
+    'Party_Encoded': [latest['Party_Encoded'].values[0]],
+    'Constituency_Encoded': [latest['Constituency_Encoded'].values[0]]
+})
 
-    party_name = st.selectbox(
-        "Select Party",
-        party_encoder.classes_
-    )
+auto_prediction = model.predict(prediction_input)[0]
 
-    constituency_name = st.selectbox(
-        "Select Constituency",
-        const_encoder.classes_
-    )
+probability = model.predict_proba(prediction_input)[0][1]
 
-# --------------------------------
-# ENCODE INPUTS
-# --------------------------------
-party_encoded = party_encoder.transform([party_name])[0]
+# ============================================================
+# DISPLAY WINNER
+# ============================================================
 
-const_encoded = const_encoder.transform([constituency_name])[0]
+if auto_prediction == 1:
 
-# --------------------------------
-# PREDICT BUTTON
-# --------------------------------
-if st.button("🔍 Predict Winner"):
+    st.success(f"""
+    🏆 Predicted Winning Party: {winner_party}
+    
+    👤 Candidate: {winner_candidate}
+    
+    📍 Constituency: {winner_const}
+    
+    🗳️ Votes: {winner_votes}
+    
+    📈 Winning Probability: {probability*100:.2f}%
+    """)
 
-    sample_data = pd.DataFrame({
+    st.balloons()
+
+else:
+
+    st.error("No Winner Predicted")
+
+# ============================================================
+# SIDEBAR MANUAL PREDICTION
+# ============================================================
+
+st.sidebar.title("🧠 Manual Prediction")
+
+party_name = st.sidebar.selectbox(
+    "Select Party",
+    party_encoder.classes_
+)
+
+const_name = st.sidebar.selectbox(
+    "Select Constituency",
+    const_encoder.classes_
+)
+
+evm_votes = st.sidebar.number_input(
+    "EVM Votes",
+    value=50000
+)
+
+postal_votes = st.sidebar.number_input(
+    "Postal Votes",
+    value=500
+)
+
+total_votes = st.sidebar.number_input(
+    "Total Votes",
+    value=50500
+)
+
+vote_percent = st.sidebar.number_input(
+    "% Votes",
+    value=45.0
+)
+
+# ============================================================
+# MANUAL PREDICTION
+# ============================================================
+
+if st.sidebar.button("Predict Result"):
+
+    party_encoded = party_encoder.transform([party_name])[0]
+
+    const_encoded = const_encoder.transform([const_name])[0]
+
+    vote_strength = evm_votes + postal_votes
+
+    sample = pd.DataFrame({
         'EVM Votes': [evm_votes],
         'Postal Votes': [postal_votes],
         'Total Votes': [total_votes],
-        '% Votes': [percent_votes],
+        '% Votes': [vote_percent],
+        'Vote_Strength': [vote_strength],
+        'Vote_Share': [0.45],
         'Party_Encoded': [party_encoded],
         'Constituency_Encoded': [const_encoded]
     })
 
-    prediction = xgb_model.predict(sample_data)
+    pred = model.predict(sample)[0]
 
-    probability = xgb_model.predict_proba(sample_data)[0][1]
+    prob = model.predict_proba(sample)[0][1]
 
-    st.markdown("---")
+    if pred == 1:
 
-    if prediction[0] == 1:
-        st.success(f"🏆 {party_name} is Predicted WINNER")
-        st.balloons()
+        st.sidebar.success(f"""
+        🏆 WINNER
+        
+        Probability: {prob*100:.2f}%
+        """)
+
     else:
-        st.error(f"❌ {party_name} is Predicted NOT WINNER")
 
-    st.info(f"Winning Probability: {probability*100:.2f}%")
+        st.sidebar.error(f"""
+        ❌ NOT WINNER
+        
+        Probability: {prob*100:.2f}%
+        """)
 
-# --------------------------------
-# CLASSIFICATION REPORT
-# --------------------------------
-st.subheader("📄 Classification Report")
-
-report = classification_report(y_test, xgb_pred)
-
-st.text(report)
-
-# --------------------------------
+# ============================================================
 # SAVE MODEL
-# --------------------------------
-joblib.dump(xgb_model, 'tamilnadu_election_model.pkl')
+# ============================================================
 
-st.success("✅ Model Saved Successfully")
+joblib.dump(model, "tn_election_model.pkl")
 
-# --------------------------------
+# ============================================================
 # FOOTER
-# --------------------------------
+# ============================================================
+
 st.markdown("""
 <hr>
+
 <center>
-<h4>Developed using Streamlit + Machine Learning + XGBoost</h4>
+
+<h3 style='color:gold;'>
+🚀 Powered by XGBoost + Streamlit + AI
+</h3>
+
 </center>
 """, unsafe_allow_html=True)
