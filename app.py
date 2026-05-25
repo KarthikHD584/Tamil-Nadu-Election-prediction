@@ -299,56 +299,75 @@ WINNER BOX
     background:
     linear-gradient(
         135deg,
-        rgba(20,20,20,0.95),
-        rgba(35,35,35,0.95)
-    );
+        rgba(0,0,0,0.96),
+        rgba(15,15,15,0.96)
+    ) !important;
 
-    border:3px solid #FFD700;
+    border:4px solid #FFD700;
 
-    border-radius:28px;
+    border-radius:30px;
 
-    padding:45px;
+    padding:50px;
 
     text-align:center;
 
     margin-top:25px;
 
     box-shadow:
-        0px 0px 35px rgba(255,215,0,0.45);
+        0px 0px 40px rgba(255,215,0,0.7);
 
     animation:pulse 2s infinite;
 }
 
-/* WINNER TEXT */
+/* MAIN TITLE */
 
 .winner-box h1 {
 
     color:#FFD700 !important;
 
-    font-size:50px !important;
+    font-size:52px !important;
 
     font-weight:900 !important;
 
-    margin-bottom:20px;
+    text-shadow:
+        0px 0px 18px rgba(255,215,0,0.8);
+
+    margin-bottom:25px;
 }
+
+/* CANDIDATE NAME */
 
 .winner-box h2 {
 
-    color:white !important;
+    color:#FFFFFF !important;
 
-    font-size:34px !important;
+    font-size:40px !important;
 
-    font-weight:700 !important;
+    font-weight:800 !important;
+
+    text-shadow:
+        0px 0px 15px rgba(255,255,255,0.5);
+
+    margin-top:15px;
 }
+
+/* PARTY NAME */
 
 .winner-box h3 {
 
-    color:#00ffcc !important;
+    color:#00FFCC !important;
 
-    font-size:28px !important;
+    font-size:32px !important;
+
+    font-weight:700 !important;
+
+    text-shadow:
+        0px 0px 15px rgba(0,255,204,0.7);
+
+    margin-top:12px;
 }
 
-/* ANIMATION */
+/* PULSE EFFECT */
 
 @keyframes pulse {
 
@@ -357,7 +376,7 @@ WINNER BOX
     }
 
     50% {
-        transform:scale(1.015);
+        transform:scale(1.02);
     }
 
     100% {
