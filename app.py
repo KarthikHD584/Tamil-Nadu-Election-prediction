@@ -1,5 +1,5 @@
 # ============================================
-# TAMIL NADU ELECTION PREDICTION - STREAMLIT APP
+# TAMIL NADU ELECTION PREDICTION 
 # ============================================
 
 import streamlit as st
@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 # PAGE CONFIG
 # --------------------------------
 st.set_page_config(
-    page_title="Tamil Nadu Election AI",
+    page_title="Tamil Nadu Election Prediction",
     page_icon="🗳️",
     layout="wide"
 )
@@ -85,7 +85,7 @@ div[data-baseweb="select"] > div {
 # --------------------------------
 # TITLE
 # --------------------------------
-st.markdown("<h1 class='main-title'>🗳️ Tamil Nadu Election AI Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='main-title'>🗳️ Tamil Nadu Election Prediction</h1>", unsafe_allow_html=True)
 st.markdown("<p class='sub-title'>Machine Learning Based Election Winner Prediction System</p>", unsafe_allow_html=True)
 
 # --------------------------------
