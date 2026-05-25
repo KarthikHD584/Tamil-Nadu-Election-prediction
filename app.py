@@ -1,5 +1,5 @@
 # ==========================================
-# 🗳️ TAMIL NADU ELECTION AI DASHBOARD
+# 🗳️ TAMIL NADU ELECTION PREDICTION
 # ULTRA PREMIUM 3D STREAMLIT UI
 # ==========================================
 
@@ -18,7 +18,7 @@ from sklearn.model_selection import train_test_split
 # ==========================================
 
 st.set_page_config(
-    page_title="Tamil Nadu Election AI",
+    page_title="Tamil Nadu Election ",
     page_icon="🗳️",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -362,11 +362,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<div class="sub-title">
-Real-Time AI Prediction • 3D Celebration UI • Political Analytics
-</div>
-""", unsafe_allow_html=True)
 
 # ==========================================
 # LOAD DATA
@@ -450,12 +445,12 @@ st.sidebar.markdown("""
 menu = st.sidebar.radio(
     "",
     [
-        "🏠 Home",
-        "📄 Dataset",
-        "📊 Analytics",
-        "🏆 Constituency Winner",
-        "🔮 Election Prediction",
-        "📈 Sentiment Analysis"
+        " Home",
+        " Dataset",
+        " Analytics",
+        " Constituency Winner",
+        " Election Prediction",
+        " Sentiment Analysis"
     ]
 )
 
