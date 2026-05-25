@@ -8,5 +8,3 @@ scikit-learn
 xgboost
 tensorflow
 joblib
-vaderSentiment
-transformers
